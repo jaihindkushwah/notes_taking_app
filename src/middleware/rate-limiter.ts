@@ -8,7 +8,7 @@ export const rateLimiter = rateLimit({
   // ipv6Subnet: 56,
   keyGenerator: (req: any) => {
     const token = req.headers.authorization.split(" ")[1];
-    if (token) {
+    if (!token) {
       return ipKeyGenerator(req.ip);
     }
     try {
@@ -16,6 +16,7 @@ export const rateLimiter = rateLimit({
       const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
       return decoded.id || ipKeyGenerator(req.ip);
     } catch (error) {
+      console.log(error);
       return ipKeyGenerator(req.ip);
     }
   },
